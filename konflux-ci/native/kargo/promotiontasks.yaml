@@ -16,7 +16,7 @@ spec:
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID}}
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
         path: ./src
       - branch: konflux-env/${{ ctx.stage }}
         path: ./out
@@ -72,10 +72,11 @@ spec:
   # Clone the Git repository that contains the Kustomize configuration
   # to the ./src directory, and the environment configuration to ./out.
   - uses: git-clone
+    as: git-clone
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID}}
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
         path: ./src
         as: src
 
@@ -83,23 +84,24 @@ spec:
     config:
       path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/integration-service/kustomization.yaml
       updates:
-        - key: resources.1
-          value: ${{ vars.repoURL }}/konflux-ci/native/development/integration-service?ref=${{ outputs['git-clone']['src'] }}"
+        - key: resources.0
+          value: ${{ vars.repoURL }}/konflux-ci/native/development/integration-service?ref=${{ task.outputs['git-clone']['commits']['src'] }}
 
   - uses: yaml-update
     config:
       path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/build-service/kustomization.yaml
       updates:
-        - key: resources.1
-          value: ${{ vars.repoURL }}/konflux-ci/native/development/build-service?ref=${{ outputs['git-clone']['src'] }}"
+        - key: resources.0
+          value: ${{ vars.repoURL }}/konflux-ci/native/development/build-service?ref=${{ task.outputs['git-clone']['commits']['src'] }}
 
   # Commit the changes to the Git repository.
   - uses: git-commit
     as: commit
     config:
-      path: ./out
-      message: "Promote konflux ${{ ctx.stage }} to  ${{ outputs['git-clone']['src'] }}"
+      path: ./src
+      message: "Promote Konflux ${{ ctx.stage }} to  ${{ task.outputs['git-clone']['commits']['src'] }}"
   # Push the changes to the Git repository.
   - uses: git-push
     config:
-      path: ./out
+      path: ./src
+      targetBranch: ${{ vars.branch }}
