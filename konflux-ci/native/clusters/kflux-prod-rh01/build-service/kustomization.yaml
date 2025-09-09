@@ -2,3 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base/build-service
+patches:
+  - target:
+      kind: ConfigMap
+      name: build-service
+    patch: |-
+      - op: add
+        path: /data/patch-key
+        value: patch-value
+
