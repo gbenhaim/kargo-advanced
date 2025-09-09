@@ -11,16 +11,11 @@ spec:
       name: development
     sources:
       direct: true
-  - origin:
-      kind: Warehouse
-      name: kflux-stg-rh01
-    sources:
-      direct: true
   promotionTemplate:
     spec:
       steps:
       - task:
-          name: promote-konflux
+          name: promote
 
 ---
 apiVersion: kargo.akuity.io/v1alpha1
@@ -37,16 +32,11 @@ spec:
     sources:
       stages:
       - kflux-stg-rh01
-  - origin:
-      kind: Warehouse
-      name: kflux-prod-rh01
-    sources:
-      direct: true
   promotionTemplate:
     spec:
       steps:
       - task:
-          name: promote-konflux
+          name: promote
 
 ---
 apiVersion: kargo.akuity.io/v1alpha1
@@ -63,11 +53,6 @@ spec:
     sources:
       stages:
       - kflux-prod-rh01
-  - origin:
-      kind: Warehouse
-      name: kflux-prod-rh02
-    sources:
-      direct: true
   promotionTemplate:
     spec:
       steps:
@@ -88,6 +73,81 @@ spec:
     sources:
       stages:
       - kflux-prod-rh01
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote-konflux
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: build-cluster-kflux-stg-rh01
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kflux-stg-rh01
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: build-cluster
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: build-cluster-kflux-prod-rh01
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kflux-prod-rh01
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: build-cluster
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: build-cluster-kflux-prod-rh02
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kflux-prod-rh02
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: build-cluster
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: build-cluster-kflux-prod-rh03
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
   - origin:
       kind: Warehouse
       name: kflux-prod-rh03
@@ -97,4 +157,4 @@ spec:
     spec:
       steps:
       - task:
-          name: promote-konflux
+          name: build-cluster

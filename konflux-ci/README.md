@@ -13,3 +13,5 @@ resource schema
     This approach won't work since when defining the stages, the requestedFreight map contains both the source stage and origin warehouse and those should match.
 
     - option 2: each cluster is a stage (same as options 1). each cluster directory has component (same as option 1). during promotion the reference to the base is updated to match the commit from the freight, manifests are built and pushed to a branch which represents the cluster. what will happen when patches in the cluster directory are modified? we need something to trigger Kargo for updating the manifest in the cluster's branch. solution: create a warehouse for every cluster that has a git source for the cluster's directory where patches are stored.
+
+    issue: stage warehouse can cause changes to skip stages.

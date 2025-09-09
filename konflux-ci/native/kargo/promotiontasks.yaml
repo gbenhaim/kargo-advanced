@@ -2,7 +2,7 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: PromotionTask
 metadata:
-  name: promote-konflux
+  name: build-cluster
 spec:
   vars:
   - name: repoURL
@@ -16,7 +16,7 @@ spec:
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - commit: ${{ commitFrom(vars.repoURL, warehouse("development")).ID }}
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID}}
         path: ./src
       - branch: konflux-env/${{ ctx.stage }}
         path: ./out
@@ -56,12 +56,50 @@ spec:
   - uses: git-push
     config:
       path: ./out
-  # # Request a sync of the ArgoCD Application to apply the changes from the
-  # # commit.
-  # - uses: argocd-update
-  #   config:
-  #     apps:
-  #     - name: guestbook-${{ ctx.stage }}
-  #       sources:
-  #       - repoURL: ${{ vars.repoURL }}
-  #         desiredRevision: ${{ task.outputs['commit'].commit }}
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: promote-konflux
+spec:
+  vars:
+  - name: repoURL
+    value: https://github.com/gbenhaim/kargo-advanced.git
+  - name: branch
+    value: main
+  steps:
+  # Clone the Git repository that contains the Kustomize configuration
+  # to the ./src directory, and the environment configuration to ./out.
+  - uses: git-clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID}}
+        path: ./src
+        as: src
+
+  - uses: yaml-update
+    config:
+      path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/integration-service/kustomization.yaml
+      updates:
+        - key: resources.1
+          value: ${{ vars.repoURL }}/konflux-ci/native/development/integration-service?ref=${{ outputs['git-clone']['src'] }}"
+
+  - uses: yaml-update
+    config:
+      path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/build-service/kustomization.yaml
+      updates:
+        - key: resources.1
+          value: ${{ vars.repoURL }}/konflux-ci/native/development/build-service?ref=${{ outputs['git-clone']['src'] }}"
+
+  # Commit the changes to the Git repository.
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./out
+      message: "Promote konflux ${{ ctx.stage }} to  ${{ outputs['git-clone']['src'] }}"
+  # Push the changes to the Git repository.
+  - uses: git-push
+    config:
+      path: ./out
