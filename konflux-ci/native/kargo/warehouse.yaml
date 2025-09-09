@@ -24,7 +24,9 @@ spec:
       repoURL: https://github.com/gbenhaim/kargo-advanced.git
       branch: main
       includePaths:
-      - konflux-ci/native/kflux-stg-rh01
+      - konflux-ci/native/clusters/kflux-stg-rh01
+      excludePaths:
+      - konflux-ci/native/clusters/kflux-stg-rh01/base
 
 ---
 # this warehouse if for building the manifests after patches are changed
@@ -38,7 +40,9 @@ spec:
       repoURL: https://github.com/gbenhaim/kargo-advanced.git
       branch: main
       includePaths:
-      - konflux-ci/native/kflux-prod-rh01
+      - konflux-ci/native/clusters/kflux-prod-rh01
+      excludePaths:
+      - konflux-ci/native/clusters/kflux-prod-rh01/base
 ---
 # this warehouse if for building the manifests after patches are changed
 apiVersion: kargo.akuity.io/v1alpha1
@@ -51,7 +55,9 @@ spec:
       repoURL: https://github.com/gbenhaim/kargo-advanced.git
       branch: main
       includePaths:
-      - konflux-ci/native/kflux-prod-rh02
+      - konflux-ci/native/clusters/kflux-prod-rh02
+      excludePaths:
+      - konflux-ci/native/clusters/kflux-prod-rh02/base
 ---
 # this warehouse if for building the manifests after patches are changed
 apiVersion: kargo.akuity.io/v1alpha1
@@ -64,4 +70,6 @@ spec:
       repoURL: https://github.com/gbenhaim/kargo-advanced.git
       branch: main
       includePaths:
-      - konflux-ci/native/kflux-prod-rh03
+      - konflux-ci/native/clusters/kflux-prod-rh03
+      excludePaths:
+      - konflux-ci/native/clusters/kflux-prod-rh03/base
