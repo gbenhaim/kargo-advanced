@@ -4,3 +4,4 @@ metadata:
   name: build-service
 data:
   key: value
+  key2: value2

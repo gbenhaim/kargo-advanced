@@ -16,7 +16,7 @@ spec:
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - commit: ${{ commitFrom(vars.repoURL).ID }}
+      - commit: ${{ commitFrom(vars.repoURL, warehouse("development")).ID }}
         path: ./src
       - branch: konflux-env/${{ ctx.stage }}
         path: ./out
@@ -51,17 +51,17 @@ spec:
     as: commit
     config:
       path: ./out
-      message: ${{ task.outputs['update-image'].commitMessage }}
+      message: "Promote konflux to ${{ ctx.stage }}"
   # Push the changes to the Git repository.
   - uses: git-push
     config:
       path: ./out
-  # Request a sync of the ArgoCD Application to apply the changes from the
-  # commit.
-  - uses: argocd-update
-    config:
-      apps:
-      - name: guestbook-${{ ctx.stage }}
-        sources:
-        - repoURL: ${{ vars.repoURL }}
-          desiredRevision: ${{ task.outputs['commit'].commit }}
+  # # Request a sync of the ArgoCD Application to apply the changes from the
+  # # commit.
+  # - uses: argocd-update
+  #   config:
+  #     apps:
+  #     - name: guestbook-${{ ctx.stage }}
+  #       sources:
+  #       - repoURL: ${{ vars.repoURL }}
+  #         desiredRevision: ${{ task.outputs['commit'].commit }}

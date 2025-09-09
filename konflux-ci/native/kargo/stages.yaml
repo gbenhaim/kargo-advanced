@@ -20,7 +20,7 @@ spec:
     spec:
       steps:
       - task:
-          name: promote
+          name: promote-konflux
 
 ---
 apiVersion: kargo.akuity.io/v1alpha1
@@ -46,7 +46,7 @@ spec:
     spec:
       steps:
       - task:
-          name: promote
+          name: promote-konflux
 
 ---
 apiVersion: kargo.akuity.io/v1alpha1
@@ -72,7 +72,7 @@ spec:
     spec:
       steps:
       - task:
-          name: promote
+          name: promote-konflux
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -97,4 +97,4 @@ spec:
     spec:
       steps:
       - task:
-          name: promote
+          name: promote-konflux
