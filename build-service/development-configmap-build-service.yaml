@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
   key: value
+  key2: value2
 kind: ConfigMap
 metadata:
   name: build-service
