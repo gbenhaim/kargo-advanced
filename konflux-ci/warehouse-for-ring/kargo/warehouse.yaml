@@ -1,0 +1,38 @@
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: development
+spec:
+  subscriptions:
+  - git:
+      repoURL: https://github.com/gbenhaim/kargo-advanced.git
+      branch: main
+      includePaths:
+      - konflux-ci/warehouse-for-ring/rings/development
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: staging
+spec:
+  subscriptions:
+  - git:
+      repoURL: https://github.com/gbenhaim/kargo-advanced.git
+      branch: main
+      includePaths:
+      - konflux-ci/warehouse-for-ring/rings/staging
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: production
+spec:
+  subscriptions:
+  - git:
+      repoURL: https://github.com/gbenhaim/kargo-advanced.git
+      branch: main
+      includePaths:
+      - konflux-ci/warehouse-for-ring/rings/production

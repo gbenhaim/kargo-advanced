@@ -1,0 +1,100 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kflux-stg-rh01
+  annotations:
+    kargo.akuity.io/color: red
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: development
+    sources:
+      direct: true
+  - origin:
+      kind: Warehouse
+      name: kflux-stg-rh01
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kflux-prod-rh01
+  annotations:
+    kargo.akuity.io/color: amber
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: development
+    sources:
+      stages:
+      - kflux-stg-rh01
+  - origin:
+      kind: Warehouse
+      name: kflux-prod-rh01
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kflux-prod-rh02
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: development
+    sources:
+      stages:
+      - kflux-prod-rh01
+  - origin:
+      kind: Warehouse
+      name: kflux-prod-rh02
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kflux-prod-rh03
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: development
+    sources:
+      stages:
+      - kflux-prod-rh01
+  - origin:
+      kind: Warehouse
+      name: kflux-prod-rh03
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote

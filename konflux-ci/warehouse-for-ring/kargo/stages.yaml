@@ -1,0 +1,60 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: development
+  annotations:
+    kargo.akuity.io/color: red
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: development
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: staging
+  annotations:
+    kargo.akuity.io/color: amber
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: staging
+    sources:
+      stages:
+      - development
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: production
+  annotations:
+    kargo.akuity.io/color: yellow
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: production
+    sources:
+      stages:
+      - production
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: promote
