@@ -9,6 +9,8 @@ spec:
     value: https://github.com/gbenhaim/kargo-advanced.git
   - name: branch
     value: main
+  - name: stageNormalized
+    value: ${{ trimSuffix(ctx.stage, "-build") }}
   steps:
   # Clone the Git repository that contains the Kustomize configuration
   # to the ./src directory, and the environment configuration to ./out.
@@ -18,7 +20,7 @@ spec:
       checkout:
       - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
         path: ./src
-      - branch: konflux-env/${{ ctx.stage }}
+      - branch: konflux-env/${{ vars.stageNormalized }}
         path: ./out
         # Create the branch if it does not exist.
         create: true
@@ -33,25 +35,25 @@ spec:
   - uses: copy
     config:
       inPath: ./src/konflux-ci/native/development
-      outPath: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/base
+      outPath: ./src/konflux-ci/native/clusters/${{ vars.stageNormalized }}/base
   # Build the Kustomize configuration in the ./src directory using the env/<stage>
   # overlay to the ./out directory.
   - uses: kustomize-build
     config:
-      path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/build-service
+      path: ./src/konflux-ci/native/clusters/${{ vars.stageNormalized }}/build-service
       outPath: ./out/build-service
   # Build the Kustomize configuration in the ./src directory using the env/<stage>
   # overlay to the ./out directory.
   - uses: kustomize-build
     config:
-      path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/integration-service
+      path: ./src/konflux-ci/native/clusters/${{ vars.stageNormalized }}/integration-service
       outPath: ./out/integration-service
   # Commit the changes to the Git repository.
   - uses: git-commit
     as: commit
     config:
       path: ./out
-      message: "Promote konflux to ${{ ctx.stage }}"
+      message: "Promote konflux to ${{ vars.stageNormalized }}"
   # Push the changes to the Git repository.
   - uses: git-push
     config:

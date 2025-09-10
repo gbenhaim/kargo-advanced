@@ -1,3 +1,4 @@
+---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Project
 metadata:
@@ -5,3 +6,19 @@ metadata:
   annotations:
     # This annotation ensures Projects (Namespaces) are created first when deployed via Argo CD
     argocd.argoproj.io/sync-wave: "-1"
+
+---
+
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectConfig
+metadata:
+  name: konflux-ci-native
+  annotations:
+    # This annotation ensures Projects (Namespaces) are created first when deployed via Argo CD
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  promotionPolicies:
+  - stageSelector:
+      # Apply to all stages matching a glob pattern
+      name: "regex:.*-build"
+    autoPromotionEnabled: true

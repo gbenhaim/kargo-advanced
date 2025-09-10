@@ -83,7 +83,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: build-cluster-kflux-stg-rh01
+  name: kflux-stg-rh01-build
   annotations:
     kargo.akuity.io/color: yellow
 spec:
@@ -103,7 +103,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: build-cluster-kflux-prod-rh01
+  name: kflux-prod-rh01-build
   annotations:
     kargo.akuity.io/color: yellow
 spec:
@@ -123,7 +123,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: build-cluster-kflux-prod-rh02
+  name: kflux-prod-rh02-build
   annotations:
     kargo.akuity.io/color: yellow
 spec:
@@ -143,7 +143,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: build-cluster-kflux-prod-rh03
+  name: kflux-prod-rh03-build
   annotations:
     kargo.akuity.io/color: yellow
 spec:
