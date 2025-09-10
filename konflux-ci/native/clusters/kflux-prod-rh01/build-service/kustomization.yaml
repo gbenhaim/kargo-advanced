@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/gbenhaim/kargo-advanced.git/konflux-ci/native/development/build-service?ref=804cdbbdea4e4843f039495770e2b85ce90900a3
+  - https://github.com/gbenhaim/kargo-advanced.git/konflux-ci/native/development/build-service?ref=4e8b2f2a9afd83d22e1faa0105fc209867cee7f8
 patches:
   - target:
       kind: ConfigMap
