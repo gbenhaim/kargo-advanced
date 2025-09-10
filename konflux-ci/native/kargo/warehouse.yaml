@@ -26,45 +26,45 @@ spec:
       includePaths:
       - konflux-ci/native/clusters/kflux-stg-rh01
 
----
-# this warehouse if for building the manifests after patches are changed
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: kflux-prod-rh01
-spec:
-  subscriptions:
-  - git:
-      repoURL: https://github.com/gbenhaim/kargo-advanced.git
-      branch: main
-      includePaths:
-      - konflux-ci/native/clusters/kflux-prod-rh01
+# ---
+# # this warehouse if for building the manifests after patches are changed
+# apiVersion: kargo.akuity.io/v1alpha1
+# kind: Warehouse
+# metadata:
+#   name: kflux-prod-rh01
+# spec:
+#   subscriptions:
+#   - git:
+#       repoURL: https://github.com/gbenhaim/kargo-advanced.git
+#       branch: main
+#       includePaths:
+#       - konflux-ci/native/clusters/kflux-prod-rh01
 
----
-# this warehouse if for building the manifests after patches are changed
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: kflux-prod-rh02
-spec:
-  subscriptions:
-  - git:
-      repoURL: https://github.com/gbenhaim/kargo-advanced.git
-      branch: main
-      includePaths:
-      - konflux-ci/native/clusters/kflux-prod-rh02
+# ---
+# # this warehouse if for building the manifests after patches are changed
+# apiVersion: kargo.akuity.io/v1alpha1
+# kind: Warehouse
+# metadata:
+#   name: kflux-prod-rh02
+# spec:
+#   subscriptions:
+#   - git:
+#       repoURL: https://github.com/gbenhaim/kargo-advanced.git
+#       branch: main
+#       includePaths:
+#       - konflux-ci/native/clusters/kflux-prod-rh02
 
----
-# this warehouse if for building the manifests after patches are changed
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: kflux-prod-rh03
-spec:
-  subscriptions:
-  - git:
-      repoURL: https://github.com/gbenhaim/kargo-advanced.git
-      branch: main
-      includePaths:
-      - konflux-ci/native/clusters/kflux-prod-rh03
+# ---
+# # this warehouse if for building the manifests after patches are changed
+# apiVersion: kargo.akuity.io/v1alpha1
+# kind: Warehouse
+# metadata:
+#   name: kflux-prod-rh03
+# spec:
+#   subscriptions:
+#   - git:
+#       repoURL: https://github.com/gbenhaim/kargo-advanced.git
+#       branch: main
+#       includePaths:
+#       - konflux-ci/native/clusters/kflux-prod-rh03
 
