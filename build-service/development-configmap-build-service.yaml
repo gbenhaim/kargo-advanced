@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
   key: value
-  key2: value2
+  key2: value22
   patch-key3: patch-value3
 kind: ConfigMap
 metadata:
