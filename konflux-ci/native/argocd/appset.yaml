@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: konflux-ci-native
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/gbenhaim/kargo-advanced.git
+      revision: HEAD
+      directories:
+      - path: konflux-ci/native/clusters/*/*
+  template:
+    metadata:
+      name: "{{path.basename}}-{{path[3]}}"
+      annotations:
+        kargo.akuity.io/authorized-stage: kargo-advanced:{{path.basename}}
+    spec:
+      destination:
+        namespace: "{{path.basename}}-{{path[3]}}"
+        server: https://kubernetes.default.svc
+      project: konflux-ci-native
+      source:
+        path: "{{path}}"
+        repoURL: https://github.com/gbenhaim/kargo-advanced.git
+        targetRevision: main
