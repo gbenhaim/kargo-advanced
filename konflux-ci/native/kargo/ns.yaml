@@ -1,0 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: konflux-ci-native
+  labels:
+    kargo.akuity.io/project: "true"
+    kargo.akuity.io/keep-namespace: "true"

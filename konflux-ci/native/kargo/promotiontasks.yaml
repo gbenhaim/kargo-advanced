@@ -83,6 +83,7 @@ spec:
         as: src
 
   - uses: yaml-update
+    as: update-integration-service
     config:
       path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/integration-service/kustomization.yaml
       updates:
@@ -90,6 +91,7 @@ spec:
           value: ${{ vars.repoURL }}/konflux-ci/native/development/integration-service?ref=${{ task.outputs['git-clone']['commits']['src'] }}
 
   - uses: yaml-update
+    as: update-build-service
     config:
       path: ./src/konflux-ci/native/clusters/${{ ctx.stage }}/build-service/kustomization.yaml
       updates:
@@ -107,3 +109,201 @@ spec:
     config:
       path: ./src
       targetBranch: ${{ vars.branch }}
+
+  - uses: argocd-update
+    config:
+      apps:
+      - name: build-service-${{ ctx.stage }}
+        sources:
+        - repoURL: ${{ vars.repoURL }}
+          #desiredRevision: ${{ task.outputs['commit'].commit }}
+          #desiredRevision: main
+
+      - name: integration-service-${{ ctx.stage }}
+        sources:
+        - repoURL: ${{ vars.repoURL }}
+          #desiredRevision: ${{ task.outputs['commit'].commit }}
+          #desiredRevision: main
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: promote-to-development
+spec:
+  vars:
+  - name: repoURL
+    value: https://github.com/gbenhaim/kargo-advanced.git
+  - name: branch
+    value: main
+  - name: component
+    value: ${{ ctx.targetFreight.origin.name }}
+  steps:
+  # Clone the Git repository that contains the Kustomize configuration
+  # to the ./src directory, and the environment configuration to ./out.
+  - uses: git-clone
+    as: git-clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - branch: main
+        path: ./src
+        as: src
+
+  - uses: yaml-update
+    as: update-component
+    config:
+      path: ./src/${{ vars.kustomizationPath }}
+      updates:
+        - key: resources.0
+          value: ${{ vars.componentRepoURL }}/${{ vars.sourcePath }}?ref=${{ task.outputs['git-clone']['commits']['src'] }}
+
+
+  # Commit the changes to the Git repository.
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./src
+      message: "${{ task.outputs['update-component']['commitMessage'] }}"
+  # Push the changes to the Git repository.
+  - uses: git-push
+    as: push
+    config:
+      path: ./src
+      # targetBranch: ${{ vars.component }}
+      generateTargetBranch: true
+
+  - uses: git-open-pr
+    as: open-pr
+    config:
+      repoURL: ${{ vars.repoURL }}
+      createTargetBranch: true
+      sourceBranch: ${{ task.outputs.push.branch }}
+      targetBranch: main
+
+  - uses: git-wait-for-pr
+    as: wait-for-pr
+    config:
+      repoURL: ${{ vars.repoURL }}
+      prNumber: ${{ task.outputs['open-pr'].pr.id }}
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: promote-component
+spec:
+  vars:
+  - name: repoURL
+    value: https://github.com/gbenhaim/kargo-advanced.git
+  - name: branch
+    value: main
+  - name: component
+    value: ${{ ctx.targetFreight.origin.name }}
+  steps:
+  # Clone the Git repository that contains the Kustomize configuration
+  # to the ./src directory, and the environment configuration to ./out.
+  - uses: git-clone
+    as: git-clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - branch: main
+        path: ./src
+        as: src
+
+  - uses: yaml-update
+    as: update-component
+    config:
+      path: ./src/${{ vars.kustomizationPath }}
+      updates:
+        - key: resources.0
+          value: ${{ vars.componentRepoURL }}/${{ vars.sourcePath }}?ref=${{ task.outputs['git-clone']['commits']['src'] }}
+
+
+  # Commit the changes to the Git repository.
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./src
+      message: "${{ task.outputs['update-component']['commitMessage'] }}"
+  # Push the changes to the Git repository.
+  - uses: git-push
+    as: push
+    config:
+      path: ./src
+      targetBranch: ${{ vars.branch }}
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: promote-component-with-copy
+spec:
+  vars:
+  - name: repoURL
+    value: https://github.com/gbenhaim/kargo-advanced.git
+  - name: branch
+    value: main
+  - name: fromCluster
+    value: ${{ ctx.targetFreight.origin.name }}
+  steps:
+  # Clone the Git repository that contains the Kustomize configuration
+  # to the ./src directory, and the environment configuration to ./out.
+  - uses: git-clone
+    as: git-clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - branch: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
+        path: ./src
+        as: src
+
+  - uses: delete
+    config:
+      path: ./src/${{ vars.outPath }}
+
+  - uses: copy
+    as: update-component
+    config:
+      inPath: ./src/konflux-ci/native/components/${{ component }}/${{ vars.fromCluster }}/base
+      outPath: ./src/${{ vars.outPath }}
+
+  # Commit the changes to the Git repository.
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./src
+      message: "Update component ${{ vars.component }} in cluster ${{ vars.outPath }}"
+  # Push the changes to the Git repository.
+  - uses: git-push
+    as: push
+    config:
+      path: ./src
+      targetBranch: ${{ vars.branch }}
+
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: deploy-cluster
+spec:
+  vars:
+  - name: repoURL
+    value: https://github.com/gbenhaim/kargo-advanced.git
+  - name: branch
+    value: main
+  - name: cluster
+    value: ${{ ctx.targetFreight.origin.name }}
+  steps:
+  # Clone the Git repository that contains the Kustomize configuration
+  # to the ./src directory, and the environment configuration to ./out.
+  - uses: git-clone
+    as: git-clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - branch: main
+        path: ./src
+        as: src
+    # trigger the sync of the argo application for component for $cluster
