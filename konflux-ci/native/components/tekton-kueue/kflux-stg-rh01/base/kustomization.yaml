@@ -1,4 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/konflux-ci/tekton-kueue.git/config/default?ref=820e75e8cd725db9cd0583ad068806578dab0df5
+  - https://github.com/konflux-ci/tekton-kueue.git/config/default?ref=90f5e30da72461ecd93f8d287a30fc0a2a941063
