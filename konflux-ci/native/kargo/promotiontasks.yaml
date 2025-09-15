@@ -245,9 +245,20 @@ spec:
     value: https://github.com/gbenhaim/kargo-advanced.git
   - name: branch
     value: main
-  - name: fromCluster
-    value: ${{ ctx.targetFreight.origin.name }}
+  - name: destinationCluster
+    value: ${{ trimSuffix(ctx.stage, "-promote") }}
+
   steps:
+  - uses: compose-output
+    as: component
+    config:
+      name: ${{ trimPrefix(ctx.targetFreight.origin.name, vars.fromCluster + "-") }}
+
+  - uses: compose-output
+    as: outPath
+    config:
+      path: konflux-ci/native/components/${{ task.outputs['component'].name }}/${{ vars.destinationCluster }}/base
+
   # Clone the Git repository that contains the Kustomize configuration
   # to the ./src directory, and the environment configuration to ./out.
   - uses: git-clone
@@ -255,26 +266,26 @@ spec:
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - branch: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
         path: ./src
         as: src
 
   - uses: delete
     config:
-      path: ./src/${{ vars.outPath }}
+      path: ./src/${{ task.outputs['outPath'].path }}
 
   - uses: copy
     as: update-component
     config:
-      inPath: ./src/konflux-ci/native/components/${{ component }}/${{ vars.fromCluster }}/base
-      outPath: ./src/${{ vars.outPath }}
+      inPath: ./src/konflux-ci/native/components/${{ task.outputs['component'].name }}/${{ vars.fromCluster }}/base
+      outPath: ./src/${{ task.outputs['outPath'].path }}
 
   # Commit the changes to the Git repository.
   - uses: git-commit
     as: commit
     config:
       path: ./src
-      message: "Update component ${{ vars.component }} in cluster ${{ vars.outPath }}"
+      message: "Update component ${{ task.outputs['component'].name }} in cluster ${{ vars.destinationCluster }}"
   # Push the changes to the Git repository.
   - uses: git-push
     as: push
@@ -294,7 +305,7 @@ spec:
   - name: branch
     value: main
   - name: cluster
-    value: ${{ ctx.targetFreight.origin.name }}
+    value: ${{ trimSuffix(ctx.targetFreight.origin.name, "-deploy") }}
   steps:
   # Clone the Git repository that contains the Kustomize configuration
   # to the ./src directory, and the environment configuration to ./out.
@@ -303,7 +314,7 @@ spec:
     config:
       repoURL: ${{ vars.repoURL }}
       checkout:
-      - branch: main
+      - commit: ${{ commitFrom(vars.repoURL, warehouse(ctx.targetFreight.origin.name)).ID }}
         path: ./src
         as: src
     # trigger the sync of the argo application for component for $cluster

@@ -13,7 +13,7 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: tekton-kueue-development
+  name: development-tekton-kueue
 spec:
   subscriptions:
   - git:
@@ -26,7 +26,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: tekton-kueue-kflux-stg-rh01
+  name: kflux-stg-rh01-tekton-kueue
 spec:
   subscriptions:
   - git:
@@ -39,7 +39,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: tekton-kueue-kflux-prod-rh01
+  name: kflux-prod-rh01-tekton-kueue
 spec:
   subscriptions:
   - git:
@@ -52,7 +52,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: tekton-kueue-kflux-prod-rh02
+  name: kflux-prod-rh02-tekton-kueue
 spec:
   subscriptions:
   - git:
@@ -65,7 +65,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: tekton-kueue-kflux-prod-rh03
+  name: kflux-prod-rh03-tekton-kueue
 spec:
   subscriptions:
   - git:

@@ -50,23 +50,23 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-promote-to-kflux-stg-rh01
+  name: kflux-stg-rh01-promote
   annotations:
     kargo.akuity.io/color: yellow
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-development
+      name: development-tekton-kueue
     sources:
       direct: true
   promotionTemplate:
     spec:
       vars:
-      - name: component
-        value: tekton-kueue
       - name: outPath
         value: konflux-ci/native/components/tekton-kueue/kflux-stg-rh01/base
+      - name: fromCluster
+        value: development
       steps:
       - task:
           name: promote-component-with-copy
@@ -75,24 +75,22 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-promote-to-kflux-prod-rh01
+  name: kflux-prod-rh01-promote
   annotations:
     kargo.akuity.io/color: yellow
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-stg-rh01
+      name: kflux-stg-rh01-tekton-kueue
     sources:
       stages:
-      - tekton-kueue-deploy-to-kflux-stg-rh01
+      - kflux-stg-rh01-deploy
   promotionTemplate:
     spec:
       vars:
-      - name: component
-        value: tekton-kueue
-      - name: outPath
-        value: konflux-ci/native/components/tekton-kueue/kflux-prod-rh01/base
+      - name: fromCluster
+        value: kflux-stg-rh01
       steps:
       - task:
           name: promote-component-with-copy
@@ -101,24 +99,22 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-promote-to-kflux-prod-rh02
+  name: kflux-prod-rh02-promote
   annotations:
     kargo.akuity.io/color: yellow
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-prod-rh01
+      name: kflux-prod-rh01-tekton-kueue
     sources:
       stages:
-      - tekton-kueue-deploy-to-kflux-prod-rh01
+      - kflux-prod-rh01-deploy
   promotionTemplate:
     spec:
       vars:
-      - name: component
-        value: tekton-kueue
-      - name: outPath
-        value: konflux-ci/native/components/tekton-kueue/kflux-prod-rh02/base
+      - name: fromCluster
+        value: kflux-prod-rh01
       steps:
       - task:
           name: promote-component-with-copy
@@ -127,24 +123,22 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-promote-to-kflux-prod-rh03
+  name: kflux-prod-rh03-promote
   annotations:
     kargo.akuity.io/color: yellow
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-prod-rh01
+      name: kflux-prod-rh01-tekton-kueue
     sources:
       stages:
-      - tekton-kueue-deploy-to-kflux-prod-rh01
+      - kflux-prod-rh01-deploy
   promotionTemplate:
     spec:
       vars:
-      - name: component
-        value: tekton-kueue
-      - name: outPath
-        value: konflux-ci/native/components/tekton-kueue/kflux-prod-rh03/base
+      - name: fromCluster
+        value: kflux-prod-rh01
       steps:
       - task:
           name: promote-component-with-copy
@@ -155,21 +149,18 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-deploy-to-kflux-stg-rh01
+  name: kflux-stg-rh01-deploy
   annotations:
     kargo.akuity.io/color: yellow
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-stg-rh01
+      name: kflux-stg-rh01-tekton-kueue
     sources:
       direct: true
   promotionTemplate:
     spec:
-      vars:
-      - name: component
-        value: tekton-kueue
       steps:
       - task:
           name: deploy-cluster
@@ -178,14 +169,14 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-deploy-to-kflux-prod-rh01
+  name: kflux-prod-rh01-deploy
   annotations:
     kargo.akuity.io/color: green
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-prod-rh01
+      name: kflux-prod-rh01-tekton-kueue
     sources:
       direct: true
   promotionTemplate:
@@ -198,14 +189,14 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-deploy-to-kflux-prod-rh02
+  name: kflux-prod-rh02-deploy
   annotations:
     kargo.akuity.io/color: blue
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-prod-rh02
+      name: kflux-prod-rh02-tekton-kueue
     sources:
       direct: true
   promotionTemplate:
@@ -217,14 +208,14 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: tekton-kueue-deploy-to-kflux-prod-rh03
+  name: kflux-prod-rh03-deploy
   annotations:
     kargo.akuity.io/color: violet
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: tekton-kueue-kflux-prod-rh03
+      name: kflux-prod-rh03-tekton-kueue
     sources:
       direct: true
   promotionTemplate:

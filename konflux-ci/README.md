@@ -15,3 +15,7 @@ resource schema
     - option 2: each cluster is a stage (same as options 1). each cluster directory has component (same as option 1). during promotion the reference to the base is updated to match the commit from the freight, manifests are built and pushed to a branch which represents the cluster. what will happen when patches in the cluster directory are modified? we need something to trigger Kargo for updating the manifest in the cluster's branch. solution: create a warehouse for every cluster that has a git source for the cluster's directory where patches are stored.
 
     issue: stage warehouse can cause changes to skip stages.
+
+
+    - option3: complete configurations for each component. each component has its own promotion pipeline. component repository
+      is monitored for changes and Kargo also open prs. current issue: updating existing prs.
